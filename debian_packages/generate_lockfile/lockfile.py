@@ -62,8 +62,9 @@ def generate_lockfile(
                     )
                     if not _debfile in debfiles[distro][arch]:
                         debfiles[distro][arch].append(_debfile)
-        # packages[distro][arch].sort(key=lambda x: x.name)
-        # debfiles[distro][arch].sort(key=lambda x: x.name)
+    for distro, arch in pigs.keys():
+        packages[distro][arch].sort(key=lambda x: x.name)
+        debfiles[distro][arch].sort(key=lambda x: x.name)
 
     return Lockfile(
         snapshots=snapshots_config,

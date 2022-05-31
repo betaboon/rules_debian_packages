@@ -110,7 +110,7 @@ class PackageIndex:
         logger.debug(f"{self}: fetching index file ... done")
         logger.debug(f"{self}: loading index file ...")
         with lzma.open(response.raw) as f:
-            for p in deb822.Packages.iter_paragraphs(f):
+            for p in deb822.Packages.iter_paragraphs(f, use_apt_pkg=False):
                 package = Package.from_deb822(self.pool_root_url, p)
                 # TODO support virtual-packages via "Provides"
                 self._add_package(package)

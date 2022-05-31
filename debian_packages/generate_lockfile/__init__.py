@@ -55,4 +55,4 @@ def main():
         logger.debug(lockfile.to_json())
     else:
         snapshots.to_yaml_file(args.snapshots_file)
-        lockfile.to_json_file(args.lock_file, indent=2)
+        lockfile.to_json_file(args.lock_file, indent=2, sort_keys=True)
