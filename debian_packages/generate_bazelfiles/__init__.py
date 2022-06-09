@@ -22,7 +22,7 @@ BUILD_FILE_TEMPLATE = """\
 # TODO in bazel 5.2.0 http_archive supports deb-files. maybe we can use that to strip out /usr/share/{docs,man}
 PACKAGES_FILE_TEMPLATE = """\
     # AUTO GENERATED
-    load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+    load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
     _DEBFILES = {debfiles}
 
@@ -37,12 +37,28 @@ PACKAGES_FILE_TEMPLATE = """\
 
     def install_deps():
         for name, url, sha256, downloaded_file_path in _DEBFILES:
-            http_file(
+            http_archive(
                 name = name,
-                urls = [url],
+                url = url,
                 sha256 = sha256,
-                downloaded_file_path = downloaded_file_path,
+                build_file_content = \"\"\"
+                {package_buildfile_content}
+                \"\"\",
             )
+"""
+
+PACKAGE_BUILDFILE_CONTENT = """
+    http_archive(
+        name = "data",
+        url = "data.tar.xz",
+        build_file_content = \\\"\\\"\\\"
+            filegroup(
+                name = "data",
+                srcs = glob(["*"]),
+                visibility = ["//visibility:public"],
+            )
+        \\\"\\\"\\\"
+    )
 """
 
 
@@ -108,6 +124,7 @@ def generate_packages_file_contents(
             default_distro=default_distro,
             default_arch=default_arch,
             debfiles=tuple(debfiles),
+            package_buildfile_content=PACKAGE_BUILDFILE_CONTENT,
         )
     )
 
